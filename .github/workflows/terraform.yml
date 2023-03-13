@@ -113,10 +113,21 @@ jobs:
     env:
       working-directory: deploy/kubernetes
     steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Update kube config
         run: |
-          aws eks update-kubeconfig --name ${{var.cluster_name}} --region ${{ secrets.AWS_REGION }}
+          aws eks update-kubeconfig --name ${{vars.cluster_name}} --region ${{ secrets.AWS_REGION }}
+          
       - name: Deploy to eks
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           kubectl apply -f complete-demo.yml
         working-directory: ${{ env.working-directory }}
