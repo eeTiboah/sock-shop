@@ -31,6 +31,11 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.2.5
+      
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
 
   Terraform-Plan:
     needs: [Checkout-and-Setup-Terraform]
@@ -69,8 +74,6 @@ jobs:
         with:
           github_token: ${{ github.token }}
         
-       
-
       - name: Terraform Plan
         id: plan
         run: 
@@ -102,6 +105,31 @@ jobs:
         run: | 
           terraform init
           terraform apply -auto-approve -input=false
+        working-directory: ${{ env.working-directory }}
+
+  Kubernetes-Deploy:
+    needs: [Terraform-Apply]
+    runs-on: ubuntu-latest
+    env:
+      working-directory: deploy/kubernetes
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Update kube config
+        run: |
+          aws eks update-kubeconfig --name ${{vars.cluster_name}} --region ${{ secrets.AWS_REGION }}
+          
+      - name: Deploy to eks
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          kubectl apply -f complete-demo.yml
         working-directory: ${{ env.working-directory }}
 
   # Terraform-Destroy:
