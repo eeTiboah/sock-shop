@@ -1,0 +1,94 @@
+
+
+name: "Terraform action"
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+      id-token: write 
+      contents: read 
+
+jobs:
+
+  Checkout-and-Setup-Terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.5
+
+  Terraform-Plan:
+    needs: [Checkout-and-Setup-Dev-Terraform]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+       
+
+      - name: Terraform Init
+        id: init
+        run: | 
+          terraform init
+       
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate 
+
+      - name: Terraform tfsec
+        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
+        with:
+          github_token: ${{ github.token }}
+       
+
+      - name: Terraform Plan
+        id: plan
+        run: 
+          terraform plan 
+       
+        continue-on-error: false
+
+  Terraform-Apply:
+    needs: [ Terraform-Dev-Plan]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: | 
+          terraform init
+          terraform apply -auto-approve -input=false
+  
+  
