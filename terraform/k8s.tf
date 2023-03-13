@@ -1,10 +1,5 @@
 
 
-locals {
-  demo_manifests = yamldecode(file("../deploy/kubernetes/complete-demo.yaml"))
-}
-
-resource "kubernetes_manifest" "demo" {
-  manifest = local.demo_manifests
-  
+resource "kubernetes_manifest" "namespace" {
+    manifest = yaml(file("../deploy/kubernetes/00-sock-shop.yaml"))
 }
