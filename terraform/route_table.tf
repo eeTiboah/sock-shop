@@ -1,5 +1,3 @@
-
-
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
@@ -36,11 +34,6 @@ resource "aws_route_table_association" "private_us_east_1b" {
   route_table_id = aws_route_table.private.id
 }
 
-resource "aws_route_table_association" "private_us_east_1c" {
-  subnet_id      = aws_subnet.private_us_east_1c.id
-  route_table_id = aws_route_table.private.id
-}
-
 resource "aws_route_table_association" "public_us_east_1a" {
   subnet_id      = aws_subnet.public_us_east_1a.id
   route_table_id = aws_route_table.public.id
@@ -48,10 +41,5 @@ resource "aws_route_table_association" "public_us_east_1a" {
 
 resource "aws_route_table_association" "public_us_east_1b" {
   subnet_id      = aws_subnet.public_us_east_1b.id
-  route_table_id = aws_route_table.public.id
-}
-
-resource "aws_route_table_association" "public_us_east_1c" {
-  subnet_id      = aws_subnet.public_us_east_1c.id
   route_table_id = aws_route_table.public.id
 }
