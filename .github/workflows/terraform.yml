@@ -11,6 +11,7 @@ on:
 permissions:
       id-token: write 
       contents: read 
+      pull-requests: write
 
 jobs:
 
@@ -34,6 +35,8 @@ jobs:
   Terraform-Plan:
     needs: [Checkout-and-Setup-Terraform]
     runs-on: ubuntu-latest
+    env:
+      working-directory: terraform
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -48,33 +51,42 @@ jobs:
         id: fmt
         run: terraform fmt -check
         continue-on-error: true
+        working-directory: ${{ env.working-directory }}
        
-
       - name: Terraform Init
         id: init
         run: | 
           terraform init
+        working-directory: ${{ env.working-directory }}
        
       - name: Terraform Validate
         id: validate
         run: terraform validate 
+        working-directory: ${{ env.working-directory }}
 
       - name: Terraform tfsec
         uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
         with:
           github_token: ${{ github.token }}
+        
        
 
       - name: Terraform Plan
         id: plan
         run: 
           terraform plan 
-       
+        working-directory: ${{ env.working-directory }}
         continue-on-error: false
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
 
   Terraform-Apply:
     needs: [ Terraform-Plan]
     runs-on: ubuntu-latest
+    env:
+      working-directory: terraform
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -90,5 +102,6 @@ jobs:
         run: | 
           terraform init
           terraform apply -auto-approve -input=false
+        working-directory: ${{ env.working-directory }}
   
   
