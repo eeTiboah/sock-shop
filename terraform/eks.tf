@@ -24,7 +24,7 @@ resource "aws_iam_role_policy_attachment" "demo_amazon_eks_cluster_policy" {
 }
 
 resource "aws_eks_cluster" "demo" {
-  name     = "demo"
+  name     = "altschool_cluster"
   version  = "1.24"
   role_arn = aws_iam_role.demo.arn
 
