@@ -32,7 +32,7 @@ jobs:
           terraform_version: 1.2.5
 
   Terraform-Plan:
-    needs: [Checkout-and-Setup-Dev-Terraform]
+    needs: [Checkout-and-Setup-Terraform]
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
@@ -73,7 +73,7 @@ jobs:
         continue-on-error: false
 
   Terraform-Apply:
-    needs: [ Terraform-Dev-Plan]
+    needs: [ Terraform-Plan]
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
