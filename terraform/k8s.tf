@@ -1,10 +1,11 @@
 
 
 resource "kubernetes_manifest" "namespace" {
-    manifest = <<EOF
-    apiVersion: v1
-    kind: Namespace
-    metadata:
-    name: sock-shop
-EOF
+    manifest = {
+    apiVersion = v1
+    kind = Namespace
+    metadata = {
+        name = sock-shop
+    }
+}
 }
