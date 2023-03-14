@@ -136,26 +136,25 @@ jobs:
 
 
 
-  Terraform-Destroy:
-    needs: [ Terraform-Plan]
-    runs-on: ubuntu-latest
-    env:
-      working-directory: terraform
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
+  # Terraform-Destroy:
+  #   needs: [ Terraform-Plan]
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     working-directory: terraform
+  #   steps:
+  #     - name: Git checkout
+  #       uses: actions/checkout@v3
 
-      - name: Configure AWS credentials from AWS account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
+  #     - name: Configure AWS credentials from AWS account
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Terraform Destroy
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: | 
-          terraform init
-          terraform destroy -auto-approve -input=false
-        working-directory: ${{ env.working-directory }}
+  #     - name: Terraform Destroy
+  #       run: | 
+  #         terraform init
+  #         terraform destroy -auto-approve -input=false
+  #       working-directory: ${{ env.working-directory }}
   
   
