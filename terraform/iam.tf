@@ -4,7 +4,7 @@ resource "aws_iam_group" "developer_group" {
 }
 
 data "aws_iam_user" "existing_user" {
-  name = "emma_ninja" 
+  user_name = "emma_ninja"
 }
 
 resource "aws_iam_policy" "viewnodespolicy" {
