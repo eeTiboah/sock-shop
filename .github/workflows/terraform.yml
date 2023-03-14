@@ -124,6 +124,7 @@ jobs:
 
       - name: Update kube config
         run: |
+          if: github.ref == 'refs/heads/main' && github.event_name == 'push'
           aws eks update-kubeconfig --name ${{vars.cluster_name}} --region ${{ secrets.AWS_REGION }}
 
       - name: Deploy to eks
