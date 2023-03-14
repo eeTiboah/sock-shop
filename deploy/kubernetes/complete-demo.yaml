@@ -91,13 +91,6 @@ spec:
     spec:
       containers:
       - name: carts-db
-        resources:
-          limits:
-            memory: 512Mi
-            cpu: 512Mi
-          requests:
-              cpu: 250m
-              memory: 512Mi
         image: mongo
         ports:
         - name: mongo
@@ -228,13 +221,6 @@ spec:
     spec:
       containers:
       - name: catalogue-db
-        resources:
-          limits:
-            memory: 512Mi
-            cpu: 512Mi
-          requests:
-              cpu: 250m
-              memory: 512Mi
         image: weaveworksdemos/catalogue-db:0.3.0
         env:
           - name: MYSQL_ROOT_PASSWORD
@@ -419,13 +405,6 @@ spec:
     spec:
       containers:
       - name: orders-db
-        resources:
-          limits:
-            memory: 512Mi
-            cpu: 512Mi
-          requests:
-            cpu: 250m
-            memory: 512Mi
         image: mongo
         ports:
         - name: mongo
@@ -607,13 +586,6 @@ spec:
     spec:
       containers:
       - name: rabbitmq
-        resources:
-            limits:
-              memory: 512Mi
-              cpu: 512Mi
-            requests:
-              cpu: 250m
-              memory: 512Mi
         image: rabbitmq:3.6.8-management
         ports:
         - containerPort: 15672
@@ -631,13 +603,6 @@ spec:
               - DAC_OVERRIDE
           readOnlyRootFilesystem: true
       - name: rabbitmq-exporter
-        resources:
-            limits:
-              memory: 512Mi
-              cpu: 512Mi
-            requests:
-                cpu: 250m
-                memory: 512Mi
         image: kbudde/rabbitmq-exporter
         ports:
         - containerPort: 9090
@@ -689,13 +654,6 @@ spec:
     spec:
       containers:
       - name: session-db
-        resources:
-            limits:
-              memory: 512Mi
-              cpu: 512Mi
-            requests:
-                cpu: 250m
-                memory: 512Mi
         image: redis:alpine
         ports:
         - name: redis
@@ -891,14 +849,8 @@ spec:
     spec:
       containers:
       - name: user-db
-        resources:
-            limits:
-              memory: 512Mi
-              cpu: 512Mi
-            requests:
-                cpu: 250m
-                memory: 512Mi
         image: weaveworksdemos/user-db:0.3.0
+
         ports:
         - name: mongo
           containerPort: 27017
