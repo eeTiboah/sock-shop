@@ -129,7 +129,7 @@ jobs:
       - name: Deploy to eks
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
-          kubectl apply -f deploy/kubernetes/complete-demo.yml
+          kubectl apply -f deploy/kubernetes/complete-demo.yaml
 
   # Terraform-Destroy:
   #   needs: [ Terraform-Plan]
