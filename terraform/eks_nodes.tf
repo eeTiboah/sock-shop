@@ -41,8 +41,10 @@ resource "aws_eks_node_group" "private_nodes" {
   node_role_arn   = aws_iam_role.nodes.arn
 
   # Single subnet to avoid data transfer charges while testing.
+  
   subnet_ids = [
-    aws_subnet.private_us_east_1a.id
+    aws_subnet.private_us_east_1a.id,
+    aws_subnet.private_us_east_1b.id
   ]
 
   capacity_type  = "ON_DEMAND"
@@ -51,7 +53,7 @@ resource "aws_eks_node_group" "private_nodes" {
   scaling_config {
     desired_size = 2
     max_size     = 3
-    min_size     = 0
+    min_size     = 2
   }
 
   update_config {
