@@ -125,12 +125,11 @@ jobs:
       - name: Update kube config
         run: |
           aws eks update-kubeconfig --name ${{vars.cluster_name}} --region ${{ secrets.AWS_REGION }}
-          
+
       - name: Deploy to eks
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
-          kubectl apply -f complete-demo.yml
-        working-directory: ${{ env.working-directory }}
+          kubectl apply -f deploy/kubernetes/complete-demo.yml
 
   # Terraform-Destroy:
   #   needs: [ Terraform-Plan]
