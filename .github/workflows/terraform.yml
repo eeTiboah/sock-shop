@@ -132,7 +132,7 @@ jobs:
         run: |
           kubectl apply -f deploy/kubernetes/complete-demo.yaml
           kubectl apply -f terraform/read-group.yaml
-          kubectl patch configmap/aws-auth -n kube-system --type json -p "$(kubectl get configmap/aws-auth -n kube-system -o json | jq '.data."mapUsers" |= .+ {"user_arn": ${{vars.user_arn}}, "username": "emma_ninja", "groups": ["reader"]}' )"
+          kubectl patch configmap/aws-auth -n kube-system --type json -p "$(kubectl get configmap/aws-auth -n kube-system -o json | jq '.data."mapUsers" |= .+ {"user_arn": "${{vars.user_arn}}", "username": "emma_ninja", "groups": ["reader"]}' )"
 
 
   # Terraform-Destroy:
