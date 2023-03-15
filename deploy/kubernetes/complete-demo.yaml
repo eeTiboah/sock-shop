@@ -27,13 +27,6 @@ spec:
         env:
          - name: JAVA_OPTS
            value: -Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
-        resources:
-          limits:
-            cpu: 300m
-            memory: 500Mi
-          requests:
-            cpu: 100m
-            memory: 200Mi
         ports:
         - containerPort: 80
         securityContext:
@@ -152,13 +145,6 @@ spec:
         command: ["/app"]
         args:
         - -port=80
-        resources:
-          limits:
-            cpu: 200m
-            memory: 200Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
         ports:
         - containerPort: 80
         securityContext:
@@ -266,13 +252,6 @@ spec:
       containers:
       - name: front-end
         image: weaveworksdemos/front-end:0.3.12
-        resources:
-          limits:
-            cpu: 300m
-            memory: 1000Mi
-          requests:
-            cpu: 100m
-            memory: 300Mi
         ports:
         - containerPort: 8079
         env:
@@ -340,13 +319,6 @@ spec:
         env:
          - name: JAVA_OPTS
            value: -Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
-        resources:
-          limits:
-            cpu: 500m
-            memory: 500Mi
-          requests:
-            cpu: 100m
-            memory: 300Mi
         ports:
         - containerPort: 80
         securityContext:
@@ -462,13 +434,6 @@ spec:
       containers:
       - name: payment
         image: weaveworksdemos/payment:0.4.3
-        resources:
-          limits:
-            cpu: 200m
-            memory: 200Mi
-          requests:
-            cpu: 99m
-            memory: 100Mi
         ports:
         - containerPort: 80
         securityContext:
@@ -535,13 +500,6 @@ spec:
         env:
          - name: JAVA_OPTS
            value: -Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
-        resources:
-          limits:
-            cpu: 300m
-            memory: 500Mi
-          requests:
-            cpu: 100m
-            memory: 300Mi
         ports:
         - containerPort: 80
       nodeSelector:
@@ -709,13 +667,6 @@ spec:
            value: zipkin.jaeger.svc.cluster.local
          - name: JAVA_OPTS
            value: -Xms64m -Xmx128m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom -Dspring.zipkin.enabled=false
-        resources:
-          limits:
-            cpu: 300m
-            memory: 500Mi
-          requests:
-            cpu: 100m
-            memory: 300Mi
         ports:
         - containerPort: 80
         securityContext:
@@ -775,13 +726,6 @@ spec:
       containers:
       - name: user
         image: weaveworksdemos/user:0.4.7
-        resources:
-          limits:
-            cpu: 300m
-            memory: 200Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
         ports:
         - containerPort: 80
         env:
