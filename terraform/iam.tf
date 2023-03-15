@@ -17,11 +17,7 @@ resource "aws_iam_policy" "viewnodespolicy" {
         {
             "Effect" = "Allow",
             "Action" = [
-                "eks:ListClusters",
-                "eks:DescribeCluster",
-                "eks:List*",
-                "eks:Describe*",
-                "eks:AccessKubernetesApi",
+                "eks:*",
                 "ssm:GetParameter",
                 
             ],
