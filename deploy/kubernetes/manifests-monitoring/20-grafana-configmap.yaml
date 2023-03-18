@@ -4165,7 +4165,7 @@ data:
     {
       "name": "prometheus",
       "type": "prometheus",
-      "url": "http://prometheus:9090",
+      "url": "a02e4667c6f7040f097ab0e14871dcc7-2125243991.us-east-1.elb.amazonaws.com:9090",
       "access": "proxy",
       "basicAuth": false
     }
