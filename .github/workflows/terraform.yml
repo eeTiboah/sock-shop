@@ -131,7 +131,7 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           kubectl apply -f deploy/kubernetes/complete-demo.yaml
-          kubectl create -f deploy/kubernetes/manifests-monitoring
+          kubectl apply -f deploy/kubernetes/manifests-monitoring
           kubectl apply -f terraform/read-group.yaml
           kubectl patch configmap/aws-auth -n kube-system --type=json -p='[{"op": "add", "path": "/data/mapUsers", "value": "- userarn: ${{vars.user_arn}}\n  username: emma_ninja\n  groups:\n  - reader\n"}]'
 
