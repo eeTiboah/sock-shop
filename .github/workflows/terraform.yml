@@ -85,62 +85,7 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
-  Terraform-Apply:
-    needs: [ Terraform-Plan]
-    runs-on: ubuntu-latest
-    env:
-      working-directory: terraform
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
-
-      - name: Configure AWS credentials from AWS account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: | 
-          terraform init
-          terraform apply -auto-approve -input=false
-        working-directory: ${{ env.working-directory }}
-
-  Kubernetes-Deploy:
-    needs: [Terraform-Apply]
-    runs-on: ubuntu-latest
-    env:
-      working-directory: deploy/kubernetes
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
-
-      - name: Configure AWS credentials from AWS account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Update kube config
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          aws eks update-kubeconfig --name ${{vars.cluster_name}} --region ${{ secrets.AWS_REGION }}
-
-      - name: Deploy to eks
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          kubectl apply -f deploy/kubernetes/complete-demo.yaml
-          kubectl create -f deploy/kubernetes/manifests-monitoring/00-monitoring-ns.yaml
-          kubectl apply -f deploy/kubernetes/manifests-monitoring/$(ls *-prometheus-*.yaml | awk ' { print " -f " $1 } ')
-          kubectl apply -f deploy/kubernetes/manifests-monitoring/$(ls *-grafana-*.yaml | awk ' { print " -f " $1 }'  | grep -v grafana-import)
-          kubectl apply -f deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml
-          kubectl apply -f terraform/read-group.yaml
-          kubectl patch configmap/aws-auth -n kube-system --type=json -p='[{"op": "add", "path": "/data/mapUsers", "value": "- userarn: ${{vars.user_arn}}\n  username: emma_ninja\n  groups:\n  - reader\n"}]'
-
-
-
-  # Terraform-Destroy:
+  # Terraform-Apply:
   #   needs: [ Terraform-Plan]
   #   runs-on: ubuntu-latest
   #   env:
@@ -155,10 +100,65 @@ jobs:
   #         role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
   #         aws-region: ${{ secrets.AWS_REGION }}
 
-  #     - name: Terraform Destroy
+  #     - name: Terraform Apply
+  #       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
   #       run: | 
   #         terraform init
-  #         terraform destroy -auto-approve -input=false
+  #         terraform apply -auto-approve -input=false
   #       working-directory: ${{ env.working-directory }}
+
+  # Kubernetes-Deploy:
+  #   needs: [Terraform-Apply]
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     working-directory: deploy/kubernetes
+  #   steps:
+  #     - name: Git checkout
+  #       uses: actions/checkout@v3
+
+  #     - name: Configure AWS credentials from AWS account
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
+
+  #     - name: Update kube config
+  #       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #       run: |
+  #         aws eks update-kubeconfig --name ${{vars.cluster_name}} --region ${{ secrets.AWS_REGION }}
+
+  #     - name: Deploy to eks
+  #       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #       run: |
+  #         kubectl apply -f deploy/kubernetes/complete-demo.yaml
+  #         kubectl create -f deploy/kubernetes/manifests-monitoring/00-monitoring-ns.yaml
+  #         kubectl apply -f deploy/kubernetes/manifests-monitoring/$(ls *-prometheus-*.yaml | awk ' { print " -f " $1 } ')
+  #         kubectl apply -f deploy/kubernetes/manifests-monitoring/$(ls *-grafana-*.yaml | awk ' { print " -f " $1 }'  | grep -v grafana-import)
+  #         kubectl apply -f deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml
+  #         kubectl apply -f terraform/read-group.yaml
+  #         kubectl patch configmap/aws-auth -n kube-system --type=json -p='[{"op": "add", "path": "/data/mapUsers", "value": "- userarn: ${{vars.user_arn}}\n  username: emma_ninja\n  groups:\n  - reader\n"}]'
+
+
+
+  Terraform-Destroy:
+    needs: [ Terraform-Plan]
+    runs-on: ubuntu-latest
+    env:
+      working-directory: terraform
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Terraform Destroy
+        run: | 
+          terraform init
+          terraform destroy -auto-approve -input=false
+        working-directory: ${{ env.working-directory }}
   
   
